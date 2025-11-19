@@ -61,7 +61,7 @@ function toggleReader(theme, fontSize) {
 
   const article = getArticleForReader();
   if (!article) {
-    console.warn('Reader Mode: no primary article content found on this page.');
+    console.warn('Zen Reader: no primary article content found on this page.');
     return;
   }
 
@@ -199,7 +199,7 @@ function extractWithReadability() {
       language: detectLanguage(cleaned)
     };
   } catch (err) {
-    console.warn('Reader Mode: Readability fallback failed', err);
+    console.warn('Zen Reader: Readability fallback failed', err);
     return null;
   }
 }
@@ -475,7 +475,7 @@ function getTitle(fallback = '') {
     .filter((t, idx, arr) => arr.indexOf(t) === idx);
 
   const preferred = cleaned.find((t) => t.length > 10) || cleaned[0];
-  return preferred || 'Reader View';
+  return preferred || 'Zen Reader';
 }
 
 function getMetadata(mainContent) {
@@ -579,8 +579,8 @@ function buildOverlay({ theme, fontSize, title, metadata, contentNode, language 
   const closeBtn = document.createElement('button');
   closeBtn.type = 'button';
   closeBtn.className = 'rm-close';
-  closeBtn.setAttribute('aria-label', 'Close reader view');
-  closeBtn.title = 'Close reader view';
+  closeBtn.setAttribute('aria-label', 'Close Zen Reader');
+  closeBtn.title = 'Close Zen Reader';
   const closeIcon = document.createElement('span');
   closeIcon.className = 'rm-close-icon';
   closeIcon.setAttribute('aria-hidden', 'true');

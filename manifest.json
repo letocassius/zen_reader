@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Reader View",
-  "description": "Safari-like reader view that extracts the main article and shows it in a clean, themeable layout.",
+  "name": "Zen Reader",
+  "description": "Zen Reader extracts the primary article and displays it in a clean, themeable overlay.",
   "version": "1.0.3",
   "action": {
-    "default_title": "Toggle Reader Mode",
+    "default_title": "Toggle Zen Reader",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png"
