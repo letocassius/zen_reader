@@ -16,6 +16,33 @@
   font-display: swap;
 }
 
+/* Guard the injected UI from host-page resets (e.g., global button styles) */
+#rm-reader-overlay,
+#rm-reader-overlay * {
+  box-sizing: border-box;
+}
+
+:where(#rm-reader-overlay) :where(button, input, select, textarea) {
+  font: inherit;
+  color: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  max-width: none;
+  width: auto;
+  height: auto;
+  line-height: inherit;
+  border-radius: 0;
+  box-shadow: none;
+  text-decoration: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 #rm-reader-overlay {
   position: fixed;
   inset: 0;
@@ -48,8 +75,8 @@
 }
 
 .rm-reader-title {
-  font-size: calc(var(--rm-font-size, 20px) * 2.7);
-  font-weight: 700;
+  font-size: calc(var(--rm-font-size, 20px) * 3);
+  font-weight: 850;
   line-height: 1.2;
   color: var(--rm-text);
   font-family: inherit;
@@ -560,8 +587,11 @@
 }
 
 .rm-stepper-btn {
-  width: 30px;
-  height: 30px;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   border: 1px solid var(--rm-border);
   background: transparent;

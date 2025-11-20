@@ -19,7 +19,7 @@ let currentState = {
   fontSize: 20,
   lineHeight: 1.7,
   maxWidth: 900,
-  textAlign: 'left',
+  textAlign: 'justify',
   fontFamily: FONT_FALLBACK
 };
 
@@ -790,6 +790,7 @@ function buildOverlay({ theme, fontSize, title, metadata, contentNode, language 
   body.appendChild(contentNode);
 
   inner.append(header, body);
+  const outlineUI = buildOutlinePanel(overlay, body);
 
   const imagesToggle = document.createElement('button');
   imagesToggle.type = 'button';
@@ -820,14 +821,17 @@ function buildOverlay({ theme, fontSize, title, metadata, contentNode, language 
   overlay.append(
     closeBtn,
     styleUI.toggleBtn,
+    outlineUI.toggleBtn,
     imagesToggle,
     linksToggle,
     returnTopBtn,
     styleUI.panel,
+    outlineUI.panel,
     inner
   );
   overlay._cleanup = () => {
     styleUI.cleanup();
+    outlineUI.cleanup();
   };
   return overlay;
 }
@@ -1111,6 +1115,84 @@ function updateAlignActive(container, align) {
     if (btn.textContent.toLowerCase() === align) btn.classList.add('active');
     else btn.classList.remove('active');
   });
+}
+
+function buildOutlinePanel(overlay, contentRoot) {
+  const toggleBtn = document.createElement('button');
+  toggleBtn.type = 'button';
+  toggleBtn.className = 'rm-outline-toggle';
+  toggleBtn.textContent = 'Show outline';
+  toggleBtn.title = 'Toggle outline navigation';
+  toggleBtn.setAttribute('aria-expanded', 'false');
+
+  const panel = document.createElement('div');
+  panel.className = 'rm-outline-panel';
+  panel.setAttribute('role', 'navigation');
+
+  const list = document.createElement('div');
+  list.className = 'rm-outline-list';
+  panel.appendChild(list);
+
+  const buildOutline = () => {
+    list.textContent = '';
+    const headings = Array.from(contentRoot.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    if (!headings.length) {
+      const empty = document.createElement('div');
+      empty.className = 'rm-outline-empty';
+      empty.textContent = 'No outline available';
+      list.appendChild(empty);
+      return;
+    }
+
+    headings.forEach((heading, idx) => {
+      const level = Number(heading.tagName.charAt(1)) || 6;
+      const rawText = (heading.innerText || heading.textContent || '').replace(/\s+/g, ' ').trim();
+      const text = rawText || `Heading ${idx + 1}`;
+      const condensed = text.length > 140 ? `${text.slice(0, 137)}...` : text;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `rm-outline-item level-${level}`;
+      btn.textContent = condensed;
+      btn.title = text;
+      btn.addEventListener('click', () => {
+        const rect = heading.getBoundingClientRect();
+        const overlayRect = overlay.getBoundingClientRect();
+        const offset = rect.top - overlayRect.top - 12;
+        const target = overlay.scrollTop + offset;
+        if (typeof overlay.scrollTo === 'function') overlay.scrollTo({ top: target, behavior: 'smooth' });
+        else overlay.scrollTop = target;
+      });
+      list.appendChild(btn);
+    });
+  };
+
+  const setOpen = (open) => {
+    panel.classList.toggle('open', open);
+    toggleBtn.textContent = open ? 'Hide outline' : 'Show outline';
+    toggleBtn.setAttribute('aria-expanded', String(open));
+  };
+
+  const outsideHandler = (e) => {
+    if (!panel.classList.contains('open')) return;
+    if (panel.contains(e.target) || toggleBtn.contains(e.target)) return;
+    setOpen(false);
+  };
+
+  toggleBtn.addEventListener('click', () => {
+    const next = !panel.classList.contains('open');
+    if (next) buildOutline();
+    setOpen(next);
+  });
+
+  document.addEventListener('mousedown', outsideHandler, true);
+  document.addEventListener('touchstart', outsideHandler, true);
+
+  const cleanup = () => {
+    document.removeEventListener('mousedown', outsideHandler, true);
+    document.removeEventListener('touchstart', outsideHandler, true);
+  };
+
+  return { toggleBtn, panel, rebuild: buildOutline, cleanup };
 }
 
 // Detect dominant language by counting Latin vs CJK characters in the cleaned content

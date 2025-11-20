@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Zen Reader",
   "description": "Zen Reader extracts the primary article and displays it in a clean, themeable overlay.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "action": {
     "default_title": "Toggle Zen Reader",
     "default_icon": {
